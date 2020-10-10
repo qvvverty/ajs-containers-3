@@ -20,10 +20,19 @@ export default class Settings {
     if (!this.availableSettings.get(option).includes(value)) {
       throw new Error('Value incorrect');
     }
+    if (this.defaultSettings.get(option) === value) {
+      if (this.userSettings.has(option)) {
+        this.userSettings.delete(option);
+      }
+      return;
+    }
     this.userSettings.set(option, value);
   }
 
   get settings() {
+    if (this.userSettings.size === 0) {
+      return this.defaultSettings;
+    }
     const resultSettings = new Map();
     for (const setting of this.defaultSettings.keys()) {
       if (this.userSettings.has(setting)) {
